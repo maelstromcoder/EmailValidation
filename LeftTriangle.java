@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class Question1 {
+public class LeftTriangle {
 
 	static Scanner console = new Scanner(System.in);
 	static int asterik;

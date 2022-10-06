@@ -6,61 +6,53 @@ public class EmailValidation {
     final static String regex2 = "[A-Z]";
     final static String regex3 = "[0-9]";
     final static String regex4 = "[!#$%&'()*+,/:;<>=?]";
+
+    // Input length to be used across methods
     static int length;
-    static String firstPortion, secondPortion;
-    static String prefix, domain;
-    static char[] array, portionOne, portionTwo;
-    static boolean[][] verifyOne, verifyTwo;
-    static boolean[] badMemory;
-    static int mid;
-    static int badCounter = 0;
-    static int AtCounter = 0;
+    // Prefix first and last character
     static char firstCharacter, lastCharacter;
+    // Prefix and domain declared
+    static String prefix, domain;
+    // Domain portions declared
+    static String firstPortion, secondPortion;
+    static char firstCharDomain, lastCharDomain;
     
+    // Array declared and initialized with input length 
+    static char[] array;
+    // @ integer values for prefix and exactlyOneAt 
+    static int mid, atCounter;
+    
+    // Boolean for methods
     static boolean isAlphanumeric, isValidPrefixChar, isValidDomainChar, exactlyOneAt;
     static boolean isValidPrefix, isValidDomain;
-    static boolean oneCharacter, onlyAlpha, followUpAlpha;
-    static boolean prefixFirstChar, prefixLastChar;
-    static boolean prefixObtained;
-    
+
+    // Booleans for Prefix
+    static boolean prefixFirstChar, prefixLastChar, oneCharacter, onlyAlpha, followUpAlpha = true;
+
+    // Booleans for Domain
+    static boolean domainFirstPortion, domainLastPortion, domainFirstChar, domainLastChar, 
+    	separatePoint, domainFirstOnlyAlpha, domainFollowUpAlpha, domainSecondOnlyAlpha;
     
     static Scanner console = new Scanner(System.in);
 	
 	public static void main(String[] args) {
 		
 		// To change to args[0]
-		String input = console.next();
+		String input = console.nextLine();
 		length = input.length();
 		array = new char[length];
 		
 		System.out.println("isValidEmail (" + input + ") returns "+ isValidEmail(input) + ".");
-	
 		System.out.println("isValidPrefix (" + input + ") returns "+ isValidPrefix(input) + ".");
-		
-		if (prefixFirstChar == false) {
-			System.out.println("Your prefix first character is not an alphanumeric.");
-		}
-		if (prefixLastChar == false) {
-			System.out.println("Your prefix last character is not an alphanumeric.");
-		}
-		if (oneCharacter == false) {
-			System.out.println("Your prefix does not contain at least one character.");
-		}
-		if (onlyAlpha == false) {
-			System.out.println("Your prefix does not contain only alphanumeric characters or underscores, periods, and dashes.");
-		}
-		if (followUpAlpha == false) {
-			System.out.println("Your prefix underscore, period or dash does not have one or more alphanumeric characters following it.");
-		}
+		PrefixVerify();
 		
 		System.out.println("isValidDomain (" + input + ") returns "+ isValidDomain(input) + ".");
+		DomainVerify();
 		
 		System.out.println("exactlyOneAt (" + input + ") returns "+ exactlyOneAt(input) + ".");
 		
 		System.out.println("getPrefix (" + input + ") returns "+ getPrefix(input) + ".");
 		System.out.println("getDomain (" + input + ") returns "+ getDomain(input) + ".");
-						
-				
 	}
 	
 	public static boolean isValidEmail(String input) {
@@ -86,8 +78,11 @@ public class EmailValidation {
 		
 		// Makes sure the first and last character is alphanumeric
 		int newLength = prefix.length() - 1;
-		firstCharacter = prefix.charAt(0);
-		lastCharacter = prefix.charAt(newLength);
+		
+		if (prefix != "") {
+			firstCharacter = prefix.charAt(0);
+			lastCharacter = prefix.charAt(newLength);
+		}
 		// Boolean value for first character of Prefix to be alphanumeric
 		prefixFirstChar = isAlphanumeric(firstCharacter);
 		// Boolean value for last character of Prefix to be alphanumeric
@@ -95,8 +90,12 @@ public class EmailValidation {
 		
 		// Makes sure that Prefix only contains alphanumeric characters, underscores "_", periods ".", and dashes "-"		
 		for (int i = 0; i < prefixLength; i++) {
-			isValidPrefixChar(prefix.charAt(i));
+			isValidPrefixChar(prefix.charAt(i));			
 			if (isValidPrefixChar(prefix.charAt(i)) == false) { 
+				if (prefix.charAt(i) == ' ') {
+					onlyAlpha = true;
+					break;
+				}
 				onlyAlpha = false;
 				break;
 			}
@@ -108,6 +107,7 @@ public class EmailValidation {
 			switch (input.charAt(i)) {
 				case '-': 
 				if (isAlphanumeric(input.charAt(i+1)) == false) {
+					i = prefixLength;
 					followUpAlpha = false;
 					break;
 				} 
@@ -117,6 +117,7 @@ public class EmailValidation {
 				}
 				case '_': 
 				if (isAlphanumeric(input.charAt(i+1)) == false) {
+					i = prefixLength;
 					followUpAlpha = false;
 					break;
 				} 
@@ -127,21 +128,42 @@ public class EmailValidation {
 				case '.':	
 				if (isAlphanumeric(input.charAt(i+1)) == false) {
 					followUpAlpha = false;
+					i = prefixLength;
 					break;
 				}
-				else if (isAlphanumeric(input.charAt(i+1)) == false) {
+				else if (isAlphanumeric(input.charAt(i+1)) == true) {
 					followUpAlpha = true;
 					break;
 				}
 			}
 		}
 		
-		System.out.println(followUpAlpha);
+		// System.out.println(followUpAlpha);
 		
+		// If all booleans are true, we have a valid prefix
 		if (prefixFirstChar == true && prefixLastChar == true && oneCharacter == true && onlyAlpha == true && followUpAlpha == true) {
 			return true;
 		}
 		return false;
+	}
+	
+	public static void PrefixVerify() {
+		// Error handling telling us which error we have to correct
+		if (prefixFirstChar == false) {
+			System.out.println("Your prefix first character is not an alphanumeric.");
+		}
+		if (prefixLastChar == false) {
+			System.out.println("Your prefix last character is not an alphanumeric.");
+		}
+		if (oneCharacter == false) {
+			System.out.println("Your prefix does not contain at least one character.");
+		}
+		if (onlyAlpha == false) {
+			System.out.println("Your prefix does not contain only alphanumeric characters or underscores, periods, and dashes.");
+		}
+		if (followUpAlpha == false) {
+			System.out.println("Your prefix underscore, period or dash does not have one or more alphanumeric characters following it.");
+		}
 	}
 	
 	public static String getPrefix(String input) {
@@ -155,12 +177,22 @@ public class EmailValidation {
 					String output = input.substring(0, input.lastIndexOf("@"));
 					isValidPrefix = true;
 					mid = i;
-										
+					
+					// Compensating for @ being the first character
+					if (mid == 0) {
+						mid = 1;
+					}
+					
 					switch (input.charAt(mid-1)) {
 					case '-': return "your dash must be followed by one or more alphanumeric characters"; 
 					case '_': return "your underscore must be followed by one or more alphanumeric characters";	
 					case '.': return "your period must be followed by one or more alphanumeric characters";
 					}
+					
+					if (input.charAt(0) == '@') {
+						return "";
+					}
+					
 					return output;
 				} 
 			} 
@@ -177,8 +209,131 @@ public class EmailValidation {
 	}
 	
 	public static boolean isValidDomain(String input) {
+		
 		domain = getDomain(input);
-		return true;
+		int domainLength = domain.length();
+		
+		for (int i = 0; i < domainLength; i++) {
+			array[i] = domain.charAt(i);
+			isValidDomainChar(array[i]);
+			
+			if (domain.charAt(i) == '.') {
+				if (isAlphanumeric(domain.charAt(i+1)) == true) {
+					separatePoint = true;
+				
+					firstPortion = domain.substring(0, domain.lastIndexOf("."));
+					if (firstPortion.length() >= 1) {
+						domainFirstPortion = true;
+					}
+					
+					for (int z = 0; z < firstPortion.length(); z++) {
+						isValidDomainChar(firstPortion.charAt(z));
+						if (isValidDomainChar(firstPortion.charAt(z)) == true) { 
+							domainFirstOnlyAlpha = true;
+						} 
+						else {
+							domainFirstOnlyAlpha = false;
+						}
+					}
+					
+					
+					
+					firstCharDomain = domain.charAt(0);
+					domainFirstChar = isAlphanumeric(firstCharDomain);
+					
+					if (firstPortion.length() > 1) {
+						lastCharDomain = domain.charAt(firstPortion.length()-1);
+						domainLastChar = isAlphanumeric(lastCharDomain);
+					}
+					else {
+						domainLastChar = false;
+					}
+					
+					
+									
+					int newDomainLength = firstPortion.length();
+					
+					for (int c = 0; c < newDomainLength; c++) {
+						switch (firstPortion.charAt(c)) {
+							case '-': 
+							if (isAlphanumeric(firstPortion.charAt(c+1)) == false) {
+								c = newDomainLength;
+								domainFollowUpAlpha = false;
+								break;
+							} 
+							else if (isAlphanumeric(firstPortion.charAt(c+1)) == true) {
+								domainFollowUpAlpha = true;
+								break;
+							}
+							case '.':	
+							if (isAlphanumeric(firstPortion.charAt(c+1)) == false) {
+								domainFollowUpAlpha = false;
+								c = newDomainLength;
+								break;
+							}
+							else if (isAlphanumeric(firstPortion.charAt(c+1)) == true) {
+								domainFollowUpAlpha = true;
+								break;
+							}
+						}
+					}
+					
+					
+					secondPortion = domain.substring(domain.lastIndexOf('.')+1);
+			    	if (secondPortion.length() >= 2) {
+			    		domainLastPortion = true;
+			    		
+			    		for (int x = 0; x < secondPortion.length(); x++) {
+			    			if (isAlphanumeric(secondPortion.charAt(x)) == true) {
+			    				domainSecondOnlyAlpha = true;
+			    			}
+			    			else {
+			    				domainSecondOnlyAlpha = false;
+			    			}
+			    		}				    	
+				   	} 
+			    	else {
+			    		domainLastPortion = false;
+			    	} 	
+				}
+			}
+		} 
+		if (domainFirstChar == true && domainLastChar == true && separatePoint == true && 
+				domainFirstOnlyAlpha == true && domainFollowUpAlpha == true && domainSecondOnlyAlpha == true) {
+			return true;
+		} 
+		else {
+			return false;
+		}
+	}	
+	
+	
+	public static void DomainVerify() {
+		
+		if (domainFirstPortion == false) {
+			System.out.println("Your domain before the period does not contain at least one character.");
+		}
+		if (domainLastPortion == false) {
+			System.out.println("Your domain after the period does not contain at least two characters.");
+		}
+		if (separatePoint == false) {
+			System.out.println("Your domain is not made up of two portions separated by a period.");
+		}
+		if (domainFirstOnlyAlpha == false) {
+			System.out.println("Your domain before the period does not only contain alphanumeric characters, periods, and dashes.");
+		}
+		if (domainFollowUpAlpha == false) {
+			System.out.println("Your domain underscore, period or dash does not have one or more alphanumeric characters following it.");
+		}
+		if (domainSecondOnlyAlpha == false) {
+			System.out.println("Your domain after the period does not contain only alphanumeric characters.");
+		}
+		if (domainFirstChar == false) {
+			System.out.println("Your domain first character is not an alphanumeric.");
+		}
+		if (domainLastChar == false) {
+			System.out.println("Your domain last character is not an alphanumeric.");
+		}
 	}
 	
 	public static String getDomain(String input) {
@@ -199,7 +354,6 @@ public class EmailValidation {
 		else {
 			return "no handle exception, please check what you entered";
 		}
-		
 	}
 		
 	
@@ -278,21 +432,22 @@ public class EmailValidation {
 	
 	public static boolean exactlyOneAt(String input) {
 		
+		// Reset Counter if method exactlyOneAt called again
+		atCounter = 0;
+		
 		for (int i = 0; i < length; i++) {
 			array[i] = input.charAt(i);
 			if (input.charAt(i) == '@') {
-				exactlyOneAt = true;
-				return true;
+				String test = "" + array[i];
+				if (test.contains("@")) {
+					atCounter++;
+				}
 			}
+		} 
+		if (atCounter == 1) {
+			exactlyOneAt = true;
+			return true; 
 		}
 		return false;
 	}
-		
-	
-	
-	
-	
-
-	
-	
 }
