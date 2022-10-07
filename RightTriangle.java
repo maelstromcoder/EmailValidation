@@ -1,8 +1,8 @@
-import java.util.Scanner;
+//	import java.util.Scanner;
 
 public class RightTriangle {
 
-	static Scanner console = new Scanner(System.in);
+//	static Scanner console = new Scanner(System.in);
 	static int asterik;
 	
 	public static void main(String[] args) {
@@ -35,6 +35,7 @@ public class RightTriangle {
 				return;
 			}
 		}
+		
 		System.out.println();
 		if (x > 0) {
 			printRightTriangle(x - 1);
@@ -44,7 +45,7 @@ public class RightTriangle {
 	public static void VerifyIfOne(int x) {
 		
 		if (asterik == 1) {
-			System.out.println("*\n");
+			System.out.println("*");
 			System.exit(0);
 		}
 		else {

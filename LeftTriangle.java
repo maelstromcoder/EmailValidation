@@ -1,8 +1,8 @@
-import java.util.Scanner;
+// 	import java.util.Scanner;
 
 public class LeftTriangle {
 
-	static Scanner console = new Scanner(System.in);
+//	static Scanner console = new Scanner(System.in);
 	static int asterik;
 	
 	public static void main(String[] args) {
