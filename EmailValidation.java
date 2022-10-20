@@ -1,14 +1,11 @@
 // import java.util.Scanner;
 
+// REMOVED USE OF ARRAYS
+// ADDED USE OF SIGNED CHAR -128 to 127 TO BE COMPARED WITH CHARAT INT VALUE 
+
 public class EmailValidation {
 
-	// Registry for alphanumeric, underscores, periods, dashes and non-alphanumeric
-	final static String regex1 = "[a-z]";
-    final static String regex2 = "[A-Z]";
-    final static String regex3 = "[0-9]";
-    final static String regex4 = "[!#$%&'()*+,/:;<>=?]";
-
-    // Input length to be used across methods
+	// Input length to be used across methods
     static int length;
     // Prefix and domain declared
     static String prefix, domain;
@@ -19,8 +16,6 @@ public class EmailValidation {
     static String firstPortion, secondPortion;
     static char firstCharDomain, lastCharDomain;
     
-    // Array declared and initialized with input length 
-    static char[] array;
     // @ integer values for prefix and exactlyOneAt 
     static int mid, atCounter;
     
@@ -38,7 +33,7 @@ public class EmailValidation {
     static boolean noDomain = false;
     
     // static Scanner console = new Scanner(System.in);
-	/**************************************************************************************************************/
+	/* ************************************************************************************************************ */
     
     
 	public static void main(String[] args) {
@@ -49,7 +44,6 @@ public class EmailValidation {
 		// args input for JVM compile
 		String input = args[0];
 		length = input.length();
-		array = new char[length];
 		
 		// Confirms if Email is valid
 		System.out.println("isValidEmail (" + input + ") returns "+ isValidEmail(input) + ".");
@@ -69,7 +63,7 @@ public class EmailValidation {
 		System.out.println("getPrefix (" + input + ") returns "+ getPrefix(input) + ".");
 		System.out.println("getDomain (" + input + ") returns "+ getDomain(input) + ".");
 	}
-	/**************************************************************************************************************/
+	/* ************************************************************************************************************ */
 	
 	
 	/* Write the method isValidEmail() which takes as input a String and returns true if the string is a valid email
@@ -87,7 +81,7 @@ public class EmailValidation {
 			}
 		return false;
 	}
-	/**************************************************************************************************************/
+	/* ************************************************************************************************************ */
 	
 	
 	/* Write a method exactlyOneAt() that takes as input a String representing a possible email address, and returns
@@ -99,21 +93,21 @@ public class EmailValidation {
 		atCounter = 0;
 		
 		for (int i = 0; i < length; i++) {
-			array[i] = input.charAt(i);
 			if (input.charAt(i) == '@') {
-				String test = "" + array[i];
-				if (test.contains("@")) {
 					atCounter++;
 				}
-			}
-		} 
+		}
+		
 		if (atCounter == 1) {
 			exactlyOneAt = true;
 			return true; 
 		}
-		return false;
+		else { 
+			return false;
+		}
 	}
-	/**************************************************************************************************************/
+	
+	/* ************************************************************************************************************ */
 	
 	
 	/* isValidPrefix() takes a String as input representing the prefix of a possible email address. The method
@@ -199,10 +193,14 @@ public class EmailValidation {
 				return true;
 			}
 		}
-		noPrefix = true;
+		if (prefixFirstChar == false && prefixLastChar == false && oneCharacter == false && onlyAlpha == false && followUpAlpha == false) {
+				noPrefix = true;
+			}
+			
+			
 		return false;
 	}
-	/**************************************************************************************************************/
+	/* ************************************************************************************************************ */
 	
 	
 	/* Acceptable prefix formats. For a prefix to be acceptable it must adhere to the following constraints:
@@ -231,10 +229,10 @@ public class EmailValidation {
 			}
 		} 
 		else if (noPrefix == true) {
-			System.out.println("You have not entered a prefix.");
+			System.out.println("You have not entered a proper prefix.");
 		}
 	}
-	/**************************************************************************************************************/
+	/* ************************************************************************************************************ */
 	
 	
 	/* Write a method getPrefix() that takes as input a String representing a possible email address. The method
@@ -246,8 +244,7 @@ public class EmailValidation {
 		// If there is exactly one @, proceed
 		if (exactlyOneAt = true) {
 			for (int i = 0; i < length; i++) {
-				array[i] = input.charAt(i);
-				isValidPrefixChar(array[i]);
+				isValidPrefixChar(input.charAt(i));
 																
 				if (input.charAt(i) == '@') {
 					// Isolate Prefix in front of @
@@ -274,7 +271,7 @@ public class EmailValidation {
 			return "no handle exception, please check what you entered";
 		}
 	}
-	/**************************************************************************************************************/
+	/* ************************************************************************************************************ */
 		
 	
 	/* isValidDomain() takes a String as input representing the domain of a possible email address. The method
@@ -293,8 +290,7 @@ public class EmailValidation {
 		
 			// Creates for loop to verify each letter of domain if alphanumeric, dash or period
 			for (int i = 0; i < domainLength; i++) {
-				array[i] = domain.charAt(i);
-				isValidDomainChar(array[i]);
+				isValidDomainChar(domain.charAt(i));
 				
 				// Primary path if there is a period in the domain			
 				if (domain.charAt(i) == '.') {
@@ -390,7 +386,7 @@ public class EmailValidation {
 			// Alternative path if there are no periods in the domain
 			// Verifies first portion of the domain (what is in front of the period)
 			for (int b = 0; b < domainLength; b++) {
-				if (array[b] != '.') {
+				if (input.charAt(b) != '.') {
 					// Verifies first portion if it is at least 1 character
 					firstPortion = domain;
 					if (firstPortion.length() >= 1) {
@@ -430,13 +426,40 @@ public class EmailValidation {
 			    			else {
 			    				domainSecondOnlyAlpha = false;
 			    			}
-			    		}
+			    		}		    		
 			    		domainFollowUpAlpha = true;
 				   	}
-			    	else {
-			    		domainLastPortion = false;
-						domainSecondOnlyNothing = true;
-			    	}
+			    	
+			    	int IntsecondPortion = secondPortion.length() - 1;
+			    	// Verifies if the follow up of a dash or period is followed by an alphanumeric
+					for (int c = 0; c < IntsecondPortion; c++) {
+						switch (secondPortion.charAt(c)) {
+							case '-': 
+							if (isAlphanumeric(domain.charAt(c+1)) == false) {
+								c = IntsecondPortion;
+								domainFollowUpAlpha = false;
+								break;
+							} 
+							else if (isAlphanumeric(domain.charAt(c+1)) == true) {
+								domainFollowUpAlpha = true;
+								break;
+							}
+							case '.':	
+							if (isAlphanumeric(domain.charAt(c+1)) == false) {
+								domainFollowUpAlpha = false;
+								c = IntsecondPortion;
+								break;
+							}
+							else if (isAlphanumeric(domain.charAt(c+1)) == true) {
+								domainFollowUpAlpha = true;
+								break;
+							}
+						}
+					}    		
+			    }
+				else {
+					domainLastPortion = false;
+					domainSecondOnlyNothing = true;
 			    }
 			}
 			
@@ -452,7 +475,7 @@ public class EmailValidation {
 		noDomain = true;
 		return false;
 	}
-	/**************************************************************************************************************/
+	/* ************************************************************************************************************ */
 	
 	
 	/* Acceptable domain formats. For a domain to be acceptable it must adhere to the following constraints:
@@ -500,7 +523,7 @@ public class EmailValidation {
 			System.out.println("You have not entered a domain.");
 		}
 	}
-	/**************************************************************************************************************/
+	/* ************************************************************************************************************ */
 	
 	
 	/* Write a method getDomain() that takes as input a String representing a possible email address. The method
@@ -513,7 +536,7 @@ public class EmailValidation {
 			
 			if (input != "") {
 				for (int i = 0; i < length; i++) {
-					isValidPrefixChar(array[i]);
+					isValidPrefixChar(input.charAt(i));
 					if (input.charAt(i) == '@') {
 						String output = input.substring(input.lastIndexOf("@") +1);
 						isValidDomain = true;
@@ -527,7 +550,7 @@ public class EmailValidation {
 		}
 		return "";
 	}
-	/**************************************************************************************************************/
+	/* ************************************************************************************************************ */
 		
 	
 	/* Write a method isAlphanumeric() that takes as input a character. The method returns true if such character is
@@ -535,26 +558,15 @@ public class EmailValidation {
 	false otherwise. */
 	
 	public static boolean isAlphanumeric(char x) {
-		// Declares character into string to use .matches function
-		String z = "" + x; 
-		
-		if (z.matches(regex1)) {
+		// Compares signed char's int value to signed char value between a to z, A to Z and 1 to 9
+		if ((x >= 'a' && x <= 'z') ||  (x >= 'A' && x <= 'Z') ||  (x >= 1 && x <= 9)) {
 			return true;
-		}
-		else if (z.matches(regex2)) {
-			return true;
-		}
-		else if (z.matches(regex3)) {
-			return true;
-		}
-		else if (z.matches(regex4)) {
-			return false;
 		}
 		else {
 			return false;
 		}
 	}
-	/**************************************************************************************************************/
+	/* ************************************************************************************************************ */
 	
 	
 	/* A method isValidPrefixChar() that takes as input a character and returns true if the character can be used
@@ -580,7 +592,7 @@ public class EmailValidation {
 			return false;
 		}
 	}
-	/**************************************************************************************************************/
+	/* ************************************************************************************************************ */
 	
 	
 	/* A method isValidDomainChar() that takes as input a character and returns true if the character can be
