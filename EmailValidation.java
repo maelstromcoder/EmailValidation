@@ -559,7 +559,7 @@ public class EmailValidation {
 	
 	public static boolean isAlphanumeric(char x) {
 		// Compares signed char's int value to signed char value between a to z, A to Z and 1 to 9
-		if ((x >= 'a' && x <= 'z') ||  (x >= 'A' && x <= 'Z') ||  (x >= 1 && x <= 9)) {
+		if ((x >= 'a' && x <= 'z') ||  (x >= 'A' && x <= 'Z') ||  (x >= 0 && x <= 9)) {
 			return true;
 		}
 		else {
